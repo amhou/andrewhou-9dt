@@ -32,8 +32,8 @@ In all, you will have two services running.
 ```
             Name                         Command              State           Ports
 --------------------------------------------------------------------------------------------
-andrewhou-9dt-gameapp          bin/entrypoint gameapp         Up      0.0.0.0:80->80/tcp
-interviewandrewhou_mysql_1     docker-entrypoint.sh mysqld    Up      0.0.0.0:3306->3306/tcp
+andrewhou-9dt_game_app         bin/entrypoint game_app        Up      0.0.0.0:80->80/tcp
+andrewhou-9dt_mysql_1     docker-entrypoint.sh mysqld    Up      0.0.0.0:3306->3306/tcp
 ```
 
 To run tests, first make sure your database is running, then execute the following:

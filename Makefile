@@ -33,7 +33,7 @@ console:
 	@${DOCKER_COMPOSE} run shell console
 
 start: persisted_resources
-	@echo "Starting apps"
+	@echo "Starting Game App"
 	@${DOCKER_COMPOSE} up -d game_app
 
 down:

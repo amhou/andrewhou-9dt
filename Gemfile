@@ -4,6 +4,7 @@ gem 'sinatra'
 gem 'mysql2'
 gem 'puma'
 gem 'rack'
+gem 'rerun'
 gem 'sequel'
 
 group :test do

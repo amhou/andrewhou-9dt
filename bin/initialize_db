@@ -18,4 +18,10 @@ end
 # Second, create tables
 DB.create_table :games do
   primary_key :id
+  String :state, :default => "IN_PROGRESS"
+  String :game_id
+  String :players
+  Integer :g_columns # We use g_columns because columns is a reserved name in Sequel
+  Integer :g_rows
+  String :winner
 end

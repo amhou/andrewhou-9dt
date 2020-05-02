@@ -19,9 +19,9 @@ case "$cmd" in
     echo "Opening a Ruby console"
     exec bundle exec bin/console
     ;;
-  gameapp)
+  game_app)
     echo "Starting GameApp"
-    exec bundle exec puma -C config/puma.gameapp.rb
+    exec rerun 'bundle exec puma -C config/puma.game_app.rb'
     ;;
   db_load)
     echo "Creating the db structure."

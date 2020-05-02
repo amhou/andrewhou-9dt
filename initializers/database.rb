@@ -1,5 +1,5 @@
 DB = Sequel.connect(
-  :adapter => 'mysql',
+  :adapter => 'mysql2',
   :user => ENV['MYSQL_USER'],
   :host => 'mysql',
   :database => ENV['MYSQL_DATABASE'],

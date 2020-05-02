@@ -1,0 +1,37 @@
+---
+
+version: '2'
+
+services:
+  base:
+    build: .
+
+  game_app:
+    image: andrewhou-9dt_base:latest
+    command: game_app
+    volumes: &std_volumes
+      - ".:/usr/src/app"
+    ports:
+      - '80:80'
+    environment: &default_env
+      APP_ENV: development
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_USER: my_user
+      MYSQL_PASSWORD: my_password
+      MYSQL_DATABASE: my_database
+
+  shell:
+    image: andrewhou-9dt_base:latest
+    command: shell
+    volumes: *std_volumes
+    environment: *default_env
+
+  mysql:
+    image: docker.io/mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_USER: my_user
+      MYSQL_PASSWORD: my_password
+      MYSQL_DATABASE: my_database
+    ports:
+      - "3306:3306"

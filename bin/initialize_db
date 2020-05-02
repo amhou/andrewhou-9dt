@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+
+require 'sequel'
+
+DB = Sequel.connect(
+  :adapter => 'mysql2',
+  :user => ENV['MYSQL_USER'],
+  :host => 'mysql',
+  :database => ENV['MYSQL_DATABASE'],
+  :password => ENV['MYSQL_PASSWORD']
+)
+
+# First, drop all tables
+DB.tables.each do |table|
+  DB.drop_table(table)
+end
+
+# Second, create tables
+DB.create_table :games do
+  primary_key :id
+end

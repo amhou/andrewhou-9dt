@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -e
+
+# Make sure we set these to be the same.
+export RACK_ENV=$APP_ENV
+
+if  [ -z ${1+x} ]; then
+  echo "Please pass an argument."
+  exit 1
+fi
+
+cmd=$1; shift
+
+case "$cmd" in
+  shell)
+    exec "/bin/bash"
+    ;;
+  console)
+    echo "Opening a Ruby console"
+    exec bundle exec bin/console
+    ;;
+  gameapp)
+    echo "Starting GameApp"
+    exec bundle exec puma -C config/puma.gameapp.rb
+    ;;
+  db_load)
+    echo "Creating the db structure."
+    exec bundle exec ruby bin/initialize_db
+    ;;
+  rspec)
+    export APP_ENV=test
+    exec bundle exec rspec spec
+    ;;
+esac
+

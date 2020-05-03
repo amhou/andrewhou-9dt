@@ -9,7 +9,7 @@ FactoryBot.define do
 
   factory :game do
     id {"some_id"}
-    state {"IN PROGRESS"}
+    state {"IN_PROGRESS"}
     player_order {"[\"player1\",\"player2\"]"}
     next_player {"player1"}
     board {"[[null,null,null,null],[null,null,null,null],[null,null,null,null],[null,null,null,null]]"}

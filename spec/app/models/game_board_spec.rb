@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'pry'
 
 describe GameBoard do
   let(:game_board) { GameBoard.new(4,4) }
@@ -31,6 +30,14 @@ describe GameBoard do
        [nil,nil,nil,nil],
        [nil,nil,nil,nil],
        [nil,nil,nil,nil]
+      ]
+    )
+
+    expect(gb.move(3, "player2")).to eq(
+      [["player1","player1","player1",nil],
+       [nil,nil,nil,nil],
+       [nil,nil,nil,nil],
+       ["player2",nil,nil,nil]
       ]
     )
   end

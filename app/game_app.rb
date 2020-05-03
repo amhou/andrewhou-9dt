@@ -19,7 +19,7 @@ class GameApp < Sinatra::Base
   get '/drop_token' do
     in_progress_games = Game.where(state: "IN_PROGRESS")
 
-    output = {"games": in_progress_games.map(&:game_id)}
+    output = {"games": in_progress_games.map(&:id)}
 
     status 200
     return output.to_json
@@ -37,7 +37,7 @@ class GameApp < Sinatra::Base
     # Validate input
     required_input = ["players", "columns", "rows"]
     required_input.each do |k|
-      if !input.has_key?(k)
+      if input.nil? || !input.has_key?(k)
         halt 400, "Missing required parameter #{k}"
       end
     end
@@ -50,12 +50,12 @@ class GameApp < Sinatra::Base
       halt 400, "Must have at least 2 players"
     end
 
-    if input["columns"].class != Integer || input["columns"] <= 0
-      halt 400, "columns must be a number greater than 0"
+    if input["columns"].class != Integer || input["columns"] <= 3
+      halt 400, "columns must be a number greater than 3"
     end
 
-    if input["rows"].class != Integer || input["rows"] <= 0
-      halt 400, "rows must be a number greater than 0"
+    if input["rows"].class != Integer || input["rows"] <= 3
+      halt 400, "rows must be a number greater than 3"
     end
 
     # Create players
@@ -67,6 +67,7 @@ class GameApp < Sinatra::Base
     # Create game
     g = Game.new
     g.id = SecureRandom.uuid
+    # IMPROVEMENT: Figure out better serialization with Sequel
     g.board = GameBoard.new(input["rows"], input["columns"]).to_json
     g.player_order = JSON.dump(input["players"])
     g.next_player = game_players[0].id
@@ -86,11 +87,7 @@ class GameApp < Sinatra::Base
   # Output:
   # { "players": ["player1", "player2"], "state": "DONE/IN_PROGRESS", "winner" "player1" }
   get "/drop_token/:game_id" do
-    game_id = params["game_id"]
-
-    if game_id.class != String
-      halt 400, {"message": "game"}
-    end
+    game_id = params["game_id"] # game_id will always be a String in Sinatra
 
     g = Game.where(id: game_id).first
 

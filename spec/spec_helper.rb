@@ -11,6 +11,10 @@ RSpec.configure do |config|
   config.color = 'true'
 
   config.before(:each) do
+    # Manually remove join tables for now
+    DB.from("games_players").delete
+    DB.from("games_moves").delete
+    DB.from("moves_players").delete
     DB.from(Game.table_name).delete
   end
 

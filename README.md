@@ -36,6 +36,21 @@ andrewhou-9dt_game_app         bin/entrypoint game_app        Up      0.0.0.0:80
 andrewhou-9dt_mysql_1     docker-entrypoint.sh mysqld    Up      0.0.0.0:3306->3306/tcp
 ```
 
+From here you can execute commands against the service.
+
+```
+$ curl localhost:80/drop_token
+{"games":["3c6bad69-d24e-45ee-92c9-62886ff631bf","7c7c6350-5fc7-40df-883f-9937d318f959"]}
+
+$ curl localhost:80/drop_token/3c6bad69-d24e-45ee-92c9-62886ff631bf/moves
+{"moves":[{"type":"MOVE","player":"player1","column":3}]}
+
+$ curl localhost:80/drop_token/3c6bad69-d24e-45ee-92c9-62886ff631bf
+{"players":["player1","player2"],"state":"IN_PROGRESS"}
+```
+
+## Tests
+
 To run tests, first make sure your database is running, then execute the following:
 
 ```

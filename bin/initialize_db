@@ -17,11 +17,44 @@ end
 
 # Second, create tables
 DB.create_table :games do
-  primary_key :id
+  String :id, primary_key: true
   String :state, :default => "IN_PROGRESS"
-  String :game_id
-  String :players
-  Integer :g_columns # We use g_columns because columns is a reserved name in Sequel
-  Integer :g_rows
+  String :player_order
+  String :next_player
+  String :board
   String :winner
+end
+
+DB.create_table :players do
+  String :id, primary_key: true
+end
+
+DB.create_table :moves do
+  primary_key :id
+  String :type
+  Integer :m_column
+  Integer :m_number
+  foreign_key :player_id, type: String
+  foreign_key :game_id, type: String
+end
+
+DB.create_table :games_players do
+  foreign_key :game_id, :games, :null => false, type: String
+  foreign_key :player_id, :players, :null => false, type: String
+  primary_key [:game_id, :player_id]
+  index [:game_id, :player_id]
+end
+
+DB.create_table :games_moves do
+  foreign_key :game_id, :games, :null => false, type: String
+  foreign_key :move_id, :moves, :null => false
+  primary_key [:game_id, :move_id]
+  index [:game_id, :move_id]
+end
+
+DB.create_table :moves_players do
+  foreign_key :move_id, :moves, :null => false
+  foreign_key :player_id, :players, :null => false, type: String
+  primary_key [:move_id, :player_id]
+  index [:move_id, :player_id]
 end

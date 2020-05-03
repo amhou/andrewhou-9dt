@@ -20,4 +20,19 @@ FactoryBot.define do
     m_column { 4 }
     player_id { "player1" }
   end
+
+  factory :game_board do
+    transient do
+      rows { 4 }
+      columns { 4 }
+      board {
+        [["player1","player1","player1","player1"],
+         [nil,nil,nil,nil],
+         [nil,nil,nil,nil],
+         [nil,nil,nil,nil]]
+      }
+    end
+
+    initialize_with { new(attributes.merge(rows: rows, columns: columns, board: board)) }
+  end
 end

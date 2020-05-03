@@ -41,40 +41,40 @@ class GameBoard
 
   def check_state
     # First check column
-    col_winner = check_consecutive(@board)
+    col_winner = GameBoard.check_consecutive(@board)
     if col_winner
       return {"state" => "winner", "winning_player" => col_winner}
     end
 
     # Second check rows
-    row_winner = check_consecutive(@board.transpose)
+    row_winner = GameBoard.check_consecutive(@board.transpose)
     if row_winner
       return {"state" => "winner", "winning_player" => row_winner}
     end
 
     # Third check diagonals
-    diagonals = create_diagonals(@board)
-    diagonal_winner = check_consecutive(diagonals)
+    diagonals = GameBoard.create_diagonals(@board)
+    diagonal_winner = GameBoard.check_consecutive(diagonals)
     if diagonal_winner
       return {"state" => "winner", "winning_player" => diagonal_winner}
     end
 
     # And counter diagonals
-    counter_diagonals = create_counter_diagonals(@board)
-    counter_diagonal_winner = check_consecutive(counter_diagonals)
+    counter_diagonals = GameBoard.create_counter_diagonals(@board)
+    counter_diagonal_winner = GameBoard.check_consecutive(counter_diagonals)
     if counter_diagonal_winner
       return {"state" => "winner", "winning_player" => counter_diagonal_winner}
     end
 
     # Last check for draws
-    if full_board?(@board)
+    if GameBoard.full_board?(@board)
       return {"state" => "draw"}
     end
 
     return {}
   end
 
-  def create_diagonals(board)
+  def self.create_diagonals(board)
     (0..board.size - WINNING_COUNT).map do |i|
       (0..board[i].size - WINNING_COUNT).map do |j|
         (0..WINNING_COUNT-1).map do |k|
@@ -84,22 +84,24 @@ class GameBoard
     end.first # Avoid the tertiary nested array
   end
 
-  def create_counter_diagonals(board)
+  def self.create_counter_diagonals(board)
     (0..board.size - WINNING_COUNT).map do |i|
       (0..board[i].size - WINNING_COUNT).map do |j|
         (0..WINNING_COUNT-1).map do |k|
-          board[i+k][board[i].size-j-k]
+          board[i+k][board[i].size-1-j-k]
         end
       end
     end.first # Avoid the tertiary nested array
   end
 
-  def full_board?(board)
+  def self.full_board?(board)
     board.each do |col|
       if col.include?(nil)
         return false
       end
     end
+
+    return true
   end
 
   def self.from_json(raw_object)
@@ -114,7 +116,7 @@ class GameBoard
     return new_board
   end
 
-  def check_consecutive(board)
+  def self.check_consecutive(board)
     board.each do |column|
       # Iterate consecutive elements
       i = column.each_cons(WINNING_COUNT).find do |i|

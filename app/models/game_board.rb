@@ -39,59 +39,67 @@ class GameBoard
     return @board
   end
 
-  def check_state(player_id)
+  def check_state
     # First check column
-    player_count = 0
-    (0..@columns).each do |c|
-      (0..@rows).each do |r|
-        if @board[c][r] == player_id
-          player_count += 1
-        else
-          player_count = 0
-        end
-
-        if player_count >= 4
-          return {"state": "winner", "winning_player": player_id}
-        end
-      end
+    col_winner = check_consecutive(@board)
+    if col_winner
+      return {"state" => "winner", "winning_player" => col_winner}
     end
 
     # Second check rows
-    player_count = 0
-    (0..@rows).each do |r|
-      (0..@columns).each do |c|
-        if @board[c][r] == player_id
-          player_count += 1
-        else
-          player_count = 0
-        end
-
-        if player_count >= 4
-          return {"state": "winner", "winning_player": player_id}
-        end
-      end
+    row_winner = check_consecutive(@board.transpose)
+    if row_winner
+      return {"state" => "winner", "winning_player" => row_winner}
     end
 
     # Third check diagonals
-    # (0..@columns - WINNING_COUNT).each do |c|
-    #   (0..@rows - WINNING_COUNT).each do |r|
-    #     diagonal = create_diagonal(c,r)
-    #     if diagonal.uniq.size == 1 && diagonal
-    #     end
-
-
-    # Last check for draws
-    return {"state": "draw"}
-  end
-
-  def create_diagonals(c_idx, r_idx)
-    diagonals = []
-
-    (c_idx..(c_idx + @columns - WINNING_COUNT)).each_with_index do |i,j|
-      diagonals << @board[i,r_idx+j]
+    diagonals = create_diagonals(@board)
+    diagonal_winner = check_consecutive(diagonals)
+    if diagonal_winner
+      return {"state" => "winner", "winning_player" => diagonal_winner}
     end
 
-    return diagonals
+    # And counter diagonals
+    counter_diagonals = create_counter_diagonals(@board)
+    counter_diagonal_winner = check_consecutive(counter_diagonals)
+    if counter_diagonal_winner
+      return {"state" => "winner", "winning_player" => counter_diagonal_winner}
+    end
+
+    # Last check for draws
+    if full_board?(@board)
+      return {"state" => "draw"}
+    end
+
+    return {}
+  end
+
+  def create_diagonals(board)
+    (0..board.size - WINNING_COUNT).map do |i|
+      (0..board[i].size - WINNING_COUNT).map do |j|
+        (0..WINNING_COUNT-1).map do |k|
+          board[i+k][j+k]
+        end
+      end
+    end.first # Avoid the tertiary nested array
+  end
+
+  def create_counter_diagonals(board)
+    (0..board.size - WINNING_COUNT).map do |i|
+      (0..board[i].size - WINNING_COUNT).map do |j|
+        (0..WINNING_COUNT-1).map do |k|
+          board[i+k][board[i].size-j-k]
+        end
+      end
+    end.first # Avoid the tertiary nested array
+  end
+
+  def full_board?(board)
+    board.each do |col|
+      if col.include?(nil)
+        return false
+      end
+    end
   end
 
   def self.from_json(raw_object)

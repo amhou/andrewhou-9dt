@@ -169,13 +169,13 @@ class GameApp < Sinatra::Base
     # Load GameBoard from database
     gb = GameBoard.from_json(g.board)
 
-    if input["column"] <= 0 || input["column"] > gb.columns
+    if input["column"] < 0 || input["column"] > gb.columns
       halt 400, "Invalid move. Column must be greater than 0 and less than or equal to #{gb.columns - 1}"
     end
 
     # Make the actual move
     begin
-      g.board = gb.move(input["column"], player_id)
+      g.board = gb.move(input["column"], player_id).to_json
       m = Move.new
       m.type = "MOVE"
       m.m_column = input["column"]
@@ -195,22 +195,20 @@ class GameApp < Sinatra::Base
       # Update the game, checking for winners, draws, and next players
       # We only need to check if the current player is a winner, as
       # they're the one that made the most recent move.
-      gb_state = gb.check_state(player_id)
+      gb_state = gb.check_state
       if gb_state["state"] == "winner"
         g.state = "DONE"
         g.winner = gb_state["winning_player"]
         g.next_player = nil
-        g.save
       elsif gb_state["state"] == "draw"
         g.state = "DONE"
         g.next_player = nil
-        g.save
       else
         g.next_player = g.get_next_player
-        g.save
       end
+      g.save
     rescue ArgumentError => e
-      halt 400, e
+      halt 400, e.message
     end
 
     return {"move": "#{game_id}/moves/#{m.m_number}"}.to_json
@@ -244,6 +242,7 @@ class GameApp < Sinatra::Base
     player_id = params["player_id"]
 
     g = Game.where(id: game_id).first
+    p = Player.where(id: player_id).first
 
     if g.nil?
       halt 404, "Game not found"
@@ -256,6 +255,11 @@ class GameApp < Sinatra::Base
     if g.state == "DONE"
       halt 410, "Game is already DONE"
     end
+
+    m = Move.new
+    m.type = "QUIT"
+    g.add_move(m)
+    p.add_move(m)
 
     # Move to the next player
     if g.next_player == player_id

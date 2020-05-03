@@ -3,7 +3,7 @@ class Move < Sequel::Model
   many_to_one :game
 
   def present
-    output = {"type": type, "player": player_id}
+    output = {"type" => type, "player" => player_id}
 
     if m_column
       output["column"] = m_column
